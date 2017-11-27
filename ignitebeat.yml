@@ -6,7 +6,12 @@ ignitebeat:
   # Defines how often an event is sent to the output
   period: 10s
   server: "http://localhost:8080"
-  node_metric: true
+  node_metri: true
+  cache_metric: true
+  all_cache: true
+  #cache_list:
+  #- CacheA
+  #- CacheB
 
 #================================ General =====================================
 

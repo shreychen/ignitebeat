@@ -46,6 +46,24 @@ func (bt *Ignitebeat) Run(b *beat.Beat) error {
 
 	ticker := time.NewTicker(bt.config.Period)
 	//      counter := 1
+
+	is_ready := true
+	var cache_list []Cache
+	if bt.config.CacheMetric {
+		if bt.config.AllCache {
+			cache_list, err = bt.GetCacheList()
+			if err != nil {
+				is_ready = false
+			}
+		} else {
+			for _, name := range bt.config.CacheList {
+				_cache := Cache{Name: name}
+				cache_list = append(cache_list, _cache)
+			}
+		}
+		logp.Debug("json", "cache list: %s", cache_list)
+	}
+
 	for {
 		select {
 		case <-bt.done:
@@ -61,13 +79,34 @@ func (bt *Ignitebeat) Run(b *beat.Beat) error {
 				event := beat.Event{
 					Timestamp: time.Now(),
 					Fields: common.MapStr{
-						"type":   b.Info.Name,
-						"metric": node_metric,
+						"type": b.Info.Name,
+						"node": node_metric,
 					},
 				}
 				bt.client.Publish(event)
-				logp.Info("Metric event sent")
+				logp.Info("Node metric event sent")
 			}
+		}
+
+		if bt.config.CacheMetric && is_ready {
+			cache_metrics := make(map[string]CacheMetric)
+			for _, c := range cache_list {
+				if cm, err := bt.GetCacheMetric(&c); err == nil {
+					cache_metrics[c.Name] = cm
+				} else {
+					logp.Debug("json", "can't get metric of Cache %s, caused by: %s", c.Name, err.Error())
+				}
+			}
+
+			event := beat.Event{
+				Timestamp: time.Now(),
+				Fields: common.MapStr{
+					"type":  b.Info.Name,
+					"cache": cache_metrics,
+				},
+			}
+			bt.client.Publish(event)
+			logp.Info("Cache metric event sent")
 		}
 
 		//              counter++
@@ -78,4 +117,3 @@ func (bt *Ignitebeat) Stop() {
 	bt.client.Close()
 	close(bt.done)
 }
-

@@ -4,6 +4,7 @@ import (
 	"io/ioutil"
 	"net"
 	"net/http"
+	"time"
 
 	"github.com/elastic/beats/libbeat/logp"
 )
@@ -22,7 +23,12 @@ func GetMyIP() (ip string, err error) {
 // Open URL
 func OpenURL(u string) (body []byte, err error) {
 
-	resp, err := http.Get(u)
+	timeout := time.Duration(5 * time.Second)
+	client := http.Client{
+		Timeout: timeout,
+	}
+
+	resp, err := client.Get(u)
 	defer resp.Body.Close()
 
 	if err != nil {

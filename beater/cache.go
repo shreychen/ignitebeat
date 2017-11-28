@@ -13,6 +13,7 @@ import (
 
 const modePartitioned = "PARTITIONED"
 const CACHE_METRIC = "/ignite?cmd=cache&cacheName="
+const CACHE_SIZE = "/ignite?cmd=size&cacheName="
 
 type Cache struct {
 	Name      string `json:"name"`
@@ -25,14 +26,23 @@ type CacheMetric struct {
 	Write int64
 	Hit   int64
 	Miss  int64
+	Size  int64
 }
 
 type CacheMetricResponse struct {
-	successStatus  int
-	affinityNodeId string
+	SuccessStatus  int
+	AffinityNodeId string
 	Err            string
-	sessionToken   string
-	response       CacheMetric
+	SessionToken   string
+	Response       CacheMetric
+}
+
+type CacheSizeResponse struct {
+	SuccessStatus  int
+	AffinityNodeId string
+	Err            string
+	SessionToken   string
+	Response       int64
 }
 
 func (ib *Ignitebeat) GetCacheList() ([]Cache, error) {
@@ -84,5 +94,38 @@ func (ib *Ignitebeat) GetCacheMetric(c *Cache) (CacheMetric, error) {
 		return metric, err
 	}
 
-	return cache_rsp.response, err
+	metric = cache_rsp.Response
+
+	if size, err := ib.GetCacheSize(c); err != nil {
+		logp.Debug(selectorDetail, "can't get size of %s, caused by: %s", c.Name, err.Error())
+	} else {
+		metric.Size = size
+	}
+
+	return metric, err
+}
+
+func (ib *Ignitebeat) GetCacheSize(c *Cache) (int64, error) {
+	var size int64
+
+	cache_size_url := fmt.Sprintf("%s%s%s", ib.config.Server, CACHE_SIZE, c.Name)
+	logp.Info("Get size of Cache %s from %s", c.Name, cache_size_url)
+
+	body, err := OpenURL(cache_size_url)
+	if err != nil {
+		logp.Info(err.Error())
+		return size, err
+	}
+
+	logp.Debug(selectorDetail, "body[%s]", string(body))
+
+	size_rsp := CacheSizeResponse{}
+	err = json.Unmarshal(body, &size_rsp)
+
+	if err != nil {
+		logp.Err(err.Error())
+		return size, err
+	}
+
+	return size_rsp.Response, err
 }

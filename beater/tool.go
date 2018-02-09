@@ -29,12 +29,12 @@ func OpenURL(u string) (body []byte, err error) {
 	}
 
 	resp, err := client.Get(u)
-	defer resp.Body.Close()
 
 	if err != nil {
 		logp.Info(err.Error())
 		return body, err
 	}
+	defer resp.Body.Close()
 
 	body, err = ioutil.ReadAll(resp.Body)
 	if err != nil {

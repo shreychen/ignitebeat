@@ -32,7 +32,7 @@ func New(b *beat.Beat, cfg *common.Config) (beat.Beater, error) {
 		config: config,
 	}
 
-	logp.Debug("json", "config: %s", config.ToString())
+	logp.Debug("json", "running configuraion as below:\n %s", config.ToString())
 
 	return bt, nil
 }

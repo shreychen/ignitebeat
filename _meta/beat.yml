@@ -20,7 +20,6 @@ ignitebeat:
   sql: false
   queries:
   - cache_name: HmClientCache
-    sqls:
-    - sql: select OWNERID, CLIENTIP from HmClient
-      size: 10
+    sql: select OWNERID, CLIENTIP from HmClient
+    size: 10
 

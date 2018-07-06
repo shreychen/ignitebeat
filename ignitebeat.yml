@@ -17,12 +17,11 @@ ignitebeat:
   #cache_list:
   #- CacheA
   #- CacheB
-  sql: true
+  sql_query: true
   queries:
   - cache_name: HmClientCache
-    sqls:
-    - sql: select OWNERID, CLIENTIP from HmClient
-      size: 10
+    sql: select OWNERID, CLIENTIP from HmClient
+    size: 1
 
 #================================ General =====================================
 

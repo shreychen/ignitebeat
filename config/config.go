@@ -9,14 +9,15 @@ import (
 	"gopkg.in/yaml.v2"
 )
 
-type SQL struct {
-	sql  string `yaml:"sql"`
-	size int    `yaml:"size"`
-}
+// type SQL struct {
+// 	sql  string `yaml:"sql"`
+// 	size int    `yaml:"size"`
+// }
 
 type Query struct {
 	CacheName string `yaml:"cache_name"`
-	Sqls      []SQL  `yaml:"sqls,flow"`
+	Sql       string `yaml:"sql"`
+	Size      string `yaml:"size"`
 }
 
 type Config struct {
@@ -26,8 +27,8 @@ type Config struct {
 	CacheMetric bool          `config:"cache_metric"`
 	AllCache    bool          `config:"all_cache"`
 	CacheList   []string      `config:"cache_list"`
-	SQL         bool          `config:"sql"`
-	Queries     []Query       `yaml:"queries,flow"`
+	SQLQuery    bool          `config:"sql_query"`
+	Queries     []Query       `config:"queries"`
 }
 
 var DefaultConfig = Config{
@@ -36,7 +37,7 @@ var DefaultConfig = Config{
 	NodeMetric:  true,
 	CacheMetric: false,
 	AllCache:    true,
-	SQL:         false,
+	SQLQuery:    false,
 }
 
 func (c *Config) ToString() string {

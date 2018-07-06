@@ -1,3 +1,0 @@
-== Traefik module
-
-This is the traefik module.

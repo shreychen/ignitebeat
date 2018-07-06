@@ -5,10 +5,14 @@ package config
 
 import "time"
 
+type SQL struct {
+	sql  string `yaml:"sql"`
+	size int    `yaml:"size"`
+}
+
 type Query struct {
-	CacheName string   `yaml:"cache_name"`
-	PageSize  int      `yaml:"page_size"`
-	Sqls      []string `yaml:"sqls"`
+	CacheName string `yaml:"cache_name"`
+	Sqls      []SQL  `yaml:"sqls"`
 }
 
 type Config struct {

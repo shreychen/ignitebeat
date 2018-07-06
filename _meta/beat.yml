@@ -6,9 +6,9 @@ ignitebeat:
   # Defines how often an event is sent to the output
   period: 10s
   # Defines Ignite's http API	
-  server: "http://localhost:8080"
+  server: "http://127.0.0.1:8080"
   # Collect node metric if set to true
-  node_metri: true
+  node_metric: true
   # Collect cache metric if set to true
   cache_metric: true
   # Collect metrics for all Caches if set to true
@@ -17,3 +17,8 @@ ignitebeat:
   #cache_list:
   #- CacheA
   #- CacheB
+  sql: false
+  queries:
+    - cache_name: HmClientCache
+      sqls:
+        - select OWNERID, CLIENTIP from HmClient

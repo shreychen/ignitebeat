@@ -3,7 +3,11 @@
 
 package config
 
-import "time"
+import (
+	"time"
+
+	"gopkg.in/yaml.v2"
+)
 
 type SQL struct {
 	sql  string `yaml:"sql"`
@@ -12,7 +16,7 @@ type SQL struct {
 
 type Query struct {
 	CacheName string `yaml:"cache_name"`
-	Sqls      []SQL  `yaml:"sqls"`
+	Sqls      []SQL  `yaml:"sqls,flow"`
 }
 
 type Config struct {
@@ -23,7 +27,7 @@ type Config struct {
 	AllCache    bool          `config:"all_cache"`
 	CacheList   []string      `config:"cache_list"`
 	SQL         bool          `config:"sql"`
-	Queries     []Query       `config:"queries"`
+	Queries     []Query       `yaml:"queries,flow"`
 }
 
 var DefaultConfig = Config{
@@ -33,4 +37,9 @@ var DefaultConfig = Config{
 	CacheMetric: false,
 	AllCache:    true,
 	SQL:         false,
+}
+
+func (c *Config) ToString() string {
+	s, _ := yaml.Marshal(&c)
+	return string(s)
 }

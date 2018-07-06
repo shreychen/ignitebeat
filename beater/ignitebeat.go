@@ -1,7 +1,6 @@
 package beater
 
 import (
-	//	"encoding/json"
 	"fmt"
 	//	"io/ioutil"
 	//	"net"
@@ -33,7 +32,7 @@ func New(b *beat.Beat, cfg *common.Config) (beat.Beater, error) {
 		config: config,
 	}
 
-	logp.Debug("json", "config: %s", config.Queries)
+	logp.Debug("json", "config: %s", config.ToString())
 
 	return bt, nil
 }

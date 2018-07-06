@@ -1,0 +1,7 @@
+################### Ignitebeat Configuration Example #########################
+
+############################# Ignitebeat ######################################
+
+ignitebeat:
+  # Defines how often an event is sent to the output
+  period: 1s

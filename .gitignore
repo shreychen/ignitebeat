@@ -1,10 +1,11 @@
 /.idea
 /build
+/data
+/logs
+/vendor
 
 .DS_Store
 /ignitebeat
 /ignitebeat.test
 *.pyc
 
-/data
-/logs

@@ -33,7 +33,7 @@ func New(b *beat.Beat, cfg *common.Config) (beat.Beater, error) {
 		config: config,
 	}
 
-	logp.Debug("json", "%s", config.Queries)
+	logp.Debug("json", "config: %s", config.Queries)
 
 	return bt, nil
 }

@@ -1,0 +1,5 @@
+ignitebeat
+Copyright 2017 shrey chen
+
+This product includes software developed by The Apache Software
+Foundation (http://www.apache.org/).

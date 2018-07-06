@@ -1,0 +1,5 @@
+= Ignitebeat Docs
+
+Welcome to the Ignitebeat documentation.
+
+

@@ -1,7 +1,11 @@
 package beater
 
 import (
+	//	"encoding/json"
 	"fmt"
+	//	"io/ioutil"
+	//	"net"
+
 	"time"
 
 	"github.com/elastic/beats/libbeat/beat"
@@ -11,28 +15,26 @@ import (
 	"github.com/shreychen/ignitebeat/config"
 )
 
-// Ignitebeat configuration.
 type Ignitebeat struct {
 	done   chan struct{}
 	config config.Config
 	client beat.Client
 }
 
-// New creates an instance of ignitebeat.
+// Creates beater
 func New(b *beat.Beat, cfg *common.Config) (beat.Beater, error) {
-	c := config.DefaultConfig
-	if err := cfg.Unpack(&c); err != nil {
+	config := config.DefaultConfig
+	if err := cfg.Unpack(&config); err != nil {
 		return nil, fmt.Errorf("Error reading config file: %v", err)
 	}
 
 	bt := &Ignitebeat{
 		done:   make(chan struct{}),
-		config: c,
+		config: config,
 	}
 	return bt, nil
 }
 
-// Run starts ignitebeat.
 func (bt *Ignitebeat) Run(b *beat.Beat) error {
 	logp.Info("ignitebeat is running! Hit CTRL-C to stop it.")
 
@@ -43,7 +45,25 @@ func (bt *Ignitebeat) Run(b *beat.Beat) error {
 	}
 
 	ticker := time.NewTicker(bt.config.Period)
-	counter := 1
+	//      counter := 1
+
+	is_ready := true
+	var cache_list []Cache
+	if bt.config.CacheMetric {
+		if bt.config.AllCache {
+			cache_list, err = bt.GetCacheList()
+			if err != nil {
+				is_ready = false
+			}
+		} else {
+			for _, name := range bt.config.CacheList {
+				_cache := Cache{Name: name}
+				cache_list = append(cache_list, _cache)
+			}
+		}
+		logp.Debug("json", "cache list: %s", cache_list)
+	}
+
 	for {
 		select {
 		case <-bt.done:
@@ -51,20 +71,48 @@ func (bt *Ignitebeat) Run(b *beat.Beat) error {
 		case <-ticker.C:
 		}
 
-		event := beat.Event{
-			Timestamp: time.Now(),
-			Fields: common.MapStr{
-				"type":    b.Info.Name,
-				"counter": counter,
-			},
+		if bt.config.NodeMetric {
+			node_metric, err := bt.GetNodeMetrics()
+			if err != nil {
+				logp.Err("can't get metrics, caused by: %s", err.Error())
+			} else {
+				event := beat.Event{
+					Timestamp: time.Now(),
+					Fields: common.MapStr{
+						"type": b.Info.Name,
+						"node": node_metric,
+					},
+				}
+				bt.client.Publish(event)
+				logp.Info("Node metric event sent")
+			}
 		}
-		bt.client.Publish(event)
-		logp.Info("Event sent")
-		counter++
+
+		if bt.config.CacheMetric && is_ready {
+			cache_metrics := make(map[string]CacheMetric)
+			for _, c := range cache_list {
+				if cm, err := bt.GetCacheMetric(&c); err == nil {
+					cache_metrics[c.Name] = cm
+				} else {
+					logp.Debug("json", "can't get metric of Cache %s, caused by: %s", c.Name, err.Error())
+				}
+			}
+
+			event := beat.Event{
+				Timestamp: time.Now(),
+				Fields: common.MapStr{
+					"type":  b.Info.Name,
+					"cache": cache_metrics,
+				},
+			}
+			bt.client.Publish(event)
+			logp.Info("Cache metric event sent")
+		}
+
+		//              counter++
 	}
 }
 
-// Stop stops ignitebeat.
 func (bt *Ignitebeat) Stop() {
 	bt.client.Close()
 	close(bt.done)

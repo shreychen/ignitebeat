@@ -32,6 +32,9 @@ func New(b *beat.Beat, cfg *common.Config) (beat.Beater, error) {
 		done:   make(chan struct{}),
 		config: config,
 	}
+
+	logp.Debug("json", "%s", config)
+
 	return bt, nil
 }
 

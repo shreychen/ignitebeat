@@ -5,3 +5,6 @@
 /ignitebeat
 /ignitebeat.test
 *.pyc
+
+/data
+/logs

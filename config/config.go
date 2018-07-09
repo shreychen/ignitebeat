@@ -17,7 +17,7 @@ import (
 type Query struct {
 	CacheName string `yaml:"cache_name"`
 	Sql       string `yaml:"sql"`
-	Size      int    `yaml:"size"`
+	Size      string `yaml:"size"`
 }
 
 type Config struct {

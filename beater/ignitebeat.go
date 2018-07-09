@@ -116,7 +116,7 @@ func (bt *Ignitebeat) Run(b *beat.Beat) error {
 				q := SQuery{&qry, bt.config.Server}
 
 				// q.server = bt.config.Server
-				if events, err := q.GenEvents(); err != nil {
+				if events, err := q.GenEvents(); err == nil {
 					for _, evt := range events {
 						bt.client.Publish(*evt)
 					}

@@ -32,26 +32,29 @@ type SQuery struct {
 }
 
 type FieldMetadata struct {
-	fieldName, fieldTypeName, schemaName, typeName string
+	FieldName     string `json:"fieldName"`
+	FieldTypeName string `json:"fieldTypeName"`
+	SchemaName    string `json:"schemaName"`
+	TypeName      string `json:"typeName"`
 }
 
 type Response struct {
-	fieldsMetadata []FieldMetadata
-	items          [][]interface{}
+	FieldsMetadata []FieldMetadata `json:"fieldsMetadata,flow"`
+	Items          [][]interface{} `json:"items,flow"`
 }
 
 type Body struct {
-	Error         string `json:"error"`
-	sessionToken  string
-	response      Response
-	successStatus int
+	Error         string   `json:"error"`
+	SessionToken  string   `json:"sessionToken"`
+	Response      Response `json:"response,flow"`
+	SuccessStatus int      `json:"successStatus"`
 }
 
 func (q *SQuery) GenURL() string {
 	sql := url.QueryEscape(q.Query.Sql)
 	// UnEscape '*' ,e.g. select * from aTable;
 	sql = strings.Replace(sql, "%2A", "*", -1)
-	url := fmt.Sprintf("%s%spageSize=%s&cacheName=%s&qry=%s", q.Server, SQL_QUERY, string(q.Query.Size), q.Query.CacheName, sql)
+	url := fmt.Sprintf("%s%spageSize=%s&cacheName=%s&qry=%s", q.Server, SQL_QUERY, q.Query.Size, q.Query.CacheName, sql)
 	logp.Info("query url: %s", url)
 	return url
 }
@@ -67,10 +70,15 @@ func (q *SQuery) GenEvents() (events []*beat.Event, err error) {
 		return events, err
 	}
 
+	logp.Debug(selectorDetail, "got response body: %s", string(body))
+
 	b, err := BodyParser(body)
 	if err != nil {
+		logp.Err(err.Error())
 		return events, err
 	}
+
+	logp.Debug("json", "parsed body %v: ", b)
 
 	return b.MakeEvents()
 
@@ -79,40 +87,41 @@ func (q *SQuery) GenEvents() (events []*beat.Event, err error) {
 }
 
 func BodyParser(body []byte) (b Body, err error) {
-	logp.Debug(selectorDetail, "body[%s]", string(body))
 	err = json.Unmarshal(body, &b)
 	return b, err
 }
 
 func (bd *Body) MakeEvents() (events []*beat.Event, err error) {
-	for _, item := range bd.response.items {
-		for idx, v := range item {
-			fieldName := bd.response.fieldsMetadata[idx].fieldName
-			fieldTypeName := bd.response.fieldsMetadata[idx].fieldTypeName
-			typeName := bd.response.fieldsMetadata[idx].typeName
-			switch fieldTypeName {
-			case javaByte:
-				v, _ = v.(int8)
-			case javaLong:
-				v, _ = v.(int64)
-			case javaString:
-				v, _ = v.(string)
-			case javaShort:
-				v, _ = v.(int64)
-			case javaInt:
-				v, _ = v.(int)
-			default:
-				v = v
-			}
-			event := beat.Event{
-				Timestamp: time.Now(),
-				Fields: common.MapStr{
-					"type": typeName,
-				},
-			}
-			event.Fields[fieldName] = v
-			events = append(events, &event)
+	logp.Info("making events")
+	for _, item := range bd.Response.Items {
+		event := beat.Event{
+			Timestamp: time.Now(),
+			Fields:    common.MapStr{},
 		}
+		for idx, v := range item {
+			fieldName := bd.Response.FieldsMetadata[idx].FieldName
+			typeName := bd.Response.FieldsMetadata[idx].TypeName
+			// fieldTypeName := bd.Response.FieldsMetadata[idx].FieldTypeName
+			// switch fieldTypeName {
+			// case javaByte:
+			// 	v, _ = v.(int8)
+			// case javaLong:
+			// 	v, _ = v.(int64)
+			// case javaString:
+			// 	v, _ = v.(string)
+			// case javaShort:
+			// 	v, _ = v.(int64)
+			// case javaInt:
+			// 	v, _ = v.(int)
+			// default:
+			// 	v = v
+			// }
+			event.Fields["type"] = typeName
+			event.Fields[fieldName] = v
+		}
+		events = append(events, &event)
 	}
+
+	logp.Info("%d events made by sql query", len(events))
 	return events, nil
 }

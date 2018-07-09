@@ -19,7 +19,7 @@ ignitebeat:
   #- CacheB
   sql_query: true
   queries:
-  - cache_name: HmClientCache
+  - cachename: HmClientCache
     sql: select OWNERID, CLIENTIP from HmClient
     size: 1
 

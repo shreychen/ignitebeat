@@ -111,7 +111,18 @@ func (bt *Ignitebeat) Run(b *beat.Beat) error {
 			logp.Info("Cache metric event sent")
 		}
 
-		//              counter++
+		if bt.config.SQLQuery && is_ready {
+			for _, qry := range bt.config.Queries {
+				q := SQuery{&qry, bt.config.Server}
+
+				// q.server = bt.config.Server
+				if events, err := q.GenEvents(); err != nil {
+					for _, evt := range events {
+						bt.client.Publish(*evt)
+					}
+				}
+			}
+		}
 	}
 }
 

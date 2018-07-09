@@ -3,6 +3,8 @@
 /data
 /logs
 /vendor
+/.vscode
+/tmp
 
 .DS_Store
 /ignitebeat

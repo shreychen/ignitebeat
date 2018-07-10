@@ -1,0 +1,84 @@
+{
+    "template": "ignitebeat-hmclient-*",
+    "mappings": {
+        "HMCLIENT": {
+            "properties": {
+                "ASSOCIATEIFNAME": {
+                    "type": "keyword"
+                },
+                "ASSOCIATEVLAN": {
+                    "type": "long"
+                },
+                "AUTHMETHOD": {
+                    "type": "byte"
+                },
+                "CLIENTDEVICEID": {
+                    "type": "long"
+                },
+                "CLIENTHOSTNAME": {
+                    "type": "keyword"
+                },
+                "CLIENTIP": {
+                    "type": "keyword"
+                },
+                "CLIENTIPV6": {
+                    "type": "long"
+                },
+                "CLIENTMAC": {
+                    "type": "keyword"
+                },
+                "CLIENTOSNAME": {
+                    "type": "keyword"
+                },
+                "CONNECTIONTYPE": {
+                    "type": "byte"
+                },
+                "DEVICEFUNCTION": {
+                    "type": "short"
+                },
+                "DEVICEID": {
+                    "type": "long"
+                },
+                "DEVICEMAC": {
+                    "type": "keyword"
+                },
+                "ENDTIME": {
+                    "type": "long"
+                },
+                "LOCATIONID": {
+                    "type": "long"
+                },
+                "MACPROTOCOL": {
+                    "type": "byte"
+                },
+                "ORGID": {
+                    "type": "long"
+                },
+                "OVERALLCLIENTHEALTHSCORE": {
+                    "type": "byte"
+                },
+                "OWNERID": {
+                    "type": "long"
+                },
+                "PORTTYPENAME": {
+                    "type": "keyword"
+                },
+                "RADIOTYPE": {
+                    "type": "byte"
+                },
+                "SSID": {
+                    "type": "keyword"
+                },
+                "STARTTIME": {
+                    "type": "long"
+                },
+                "USERID": {
+                    "type": "long"
+                },
+                "USERPROFILENAME": {
+                    "type": "keyword"
+                }
+            }
+        }
+    }
+}

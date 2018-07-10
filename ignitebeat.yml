@@ -23,8 +23,8 @@ ignitebeat:
   #   sql: select OWNERID, CLIENTIP from HmClient
   #   size: 1
   - cachename: HmClientCache
-    sql: select * from HmClient
-    size: 1
+    sql: select ENDTIME from HMCLIENT where DATEDIFF('MS','1970-01-01',CURRENT_TIMESTAMP)-ENDTIME<30000 and ENDTIME<>0
+    size: 1000000
 
 #================================ General =====================================
 
@@ -40,6 +40,8 @@ ignitebeat:
 # output.
 #fields:
 #  env: staging
+setup.template.enabled: false
+
 
 
 #============================== Dashboards =====================================
@@ -87,6 +89,11 @@ setup.kibana:
 output.elasticsearch:
   # Array of hosts to connect to.
   hosts: ["127.0.0.1:9200"]
+  index: "ignitebeat-%{[beat.version]}-%{+yyyy.MM.dd}"
+  indices:
+    - index: "ignitebeat-hmclient-%{+yyyy.MM.dd}"
+      when.contains:
+        type: "HMCLIENT"
 
   # Optional protocol and basic auth credentials.
   #protocol: "https"

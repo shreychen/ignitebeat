@@ -22,4 +22,5 @@ ignitebeat:
   - cache_name: HmClientCache
     sql: select OWNERID, CLIENTIP from HmClient
     size: 10
+    type: hmClient
 

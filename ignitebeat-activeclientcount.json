@@ -1,0 +1,12 @@
+{
+    "template": "ignitebeat-activeclientcount-*",
+    "mappings": {
+        "HMCLIENT": {
+            "properties": {
+                "ACTIVECLIENTCOUNT": {
+                    "type": "long"
+                }
+            }
+        }
+    }
+}

@@ -25,7 +25,7 @@ ignitebeat:
   - cachename: HmClientCache
     sql: select * from HMCLIENT where DATEDIFF('MS','1970-01-01',CURRENT_TIMESTAMP)-ENDTIME<10000 and ENDTIME=0
     size: 1000000
-    type: hmClientCache
+    type: hmClient
   - cachename: HmClientCache
     sql: select count(*) as activeClientCount from HMCLIENT where ENDTIME=0
     size: 1

@@ -118,6 +118,7 @@ func (bt *Ignitebeat) Run(b *beat.Beat) error {
 				// q.server = bt.config.Server
 				if events, err := q.GenEvents(); err == nil {
 					for _, evt := range events {
+						(*evt).Fields["type"] = qry.Type
 						bt.client.Publish(*evt)
 					}
 				}

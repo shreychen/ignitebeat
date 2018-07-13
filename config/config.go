@@ -18,6 +18,7 @@ type Query struct {
 	CacheName string `yaml:"cache_name"`
 	Sql       string `yaml:"sql"`
 	Size      string `yaml:"size"`
+	Type      string `yaml:"type"`
 }
 
 type Config struct {

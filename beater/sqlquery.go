@@ -100,7 +100,7 @@ func (bd *Body) MakeEvents() (events []*beat.Event, err error) {
 		}
 		for idx, v := range item {
 			fieldName := bd.Response.FieldsMetadata[idx].FieldName
-			typeName := bd.Response.FieldsMetadata[idx].TypeName
+			// typeName := bd.Response.FieldsMetadata[idx].TypeName
 			// fieldTypeName := bd.Response.FieldsMetadata[idx].FieldTypeName
 			// switch fieldTypeName {
 			// case javaByte:
@@ -116,7 +116,7 @@ func (bd *Body) MakeEvents() (events []*beat.Event, err error) {
 			// default:
 			// 	v = v
 			// }
-			event.Fields["type"] = typeName
+			// event.Fields["type"] = typeName
 			event.Fields[fieldName] = v
 		}
 		events = append(events, &event)

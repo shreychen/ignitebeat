@@ -23,8 +23,13 @@ ignitebeat:
   #   sql: select OWNERID, CLIENTIP from HmClient
   #   size: 1
   - cachename: HmClientCache
-    sql: select ENDTIME from HMCLIENT where DATEDIFF('MS','1970-01-01',CURRENT_TIMESTAMP)-ENDTIME<30000 and ENDTIME<>0
+    sql: select * from HMCLIENT where DATEDIFF('MS','1970-01-01',CURRENT_TIMESTAMP)-ENDTIME<10000 and ENDTIME=0
     size: 1000000
+    type: hmClientCache
+  - cachename: HmClientCache
+    sql: select count(*) as activeClientCount from HMCLIENT where ENDTIME=0
+    size: 1
+    type: activeClientCount
 
 #================================ General =====================================
 

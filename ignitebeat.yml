@@ -98,7 +98,11 @@ output.elasticsearch:
   indices:
     - index: "ignitebeat-hmclient-%{+yyyy.MM.dd}"
       when.contains:
-        type: "HMCLIENT"
+        type: "hmClient"
+    - index: "ignitebeat-activeclientcount-%{+yyyy.MM.dd}"
+      when.contains:
+        type: "activeClientCount"
+        
 
   # Optional protocol and basic auth credentials.
   #protocol: "https"

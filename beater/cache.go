@@ -22,10 +22,10 @@ type Cache struct {
 }
 
 type CacheMetric struct {
-	Read  int64
-	Write int64
-	Hit   int64
-	Miss  int64
+	Read  int64 `json:"reads"`
+	Write int64 `json:"writes"`
+	Hit   int64 `json:"hits"`
+	Miss  int64 `json:"misses"`
 	Size  int64
 }
 

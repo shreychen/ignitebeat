@@ -34,7 +34,7 @@ type CacheMetricResponse struct {
 	AffinityNodeId string
 	Err            string
 	SessionToken   string
-	Response       CacheMetric
+	Response       CacheMetric `json:"response,flow"`
 }
 
 type CacheSizeResponse struct {

@@ -100,6 +100,9 @@ func (bd *Body) MakeEvents() (events []*beat.Event, err error) {
 		}
 		for idx, v := range item {
 			fieldName := bd.Response.FieldsMetadata[idx].FieldName
+			fieldName = strings.Replace(fieldName, "-", "_", -1)
+			fieldName = strings.ToLower(fieldName)
+
 			// typeName := bd.Response.FieldsMetadata[idx].TypeName
 			// fieldTypeName := bd.Response.FieldsMetadata[idx].FieldTypeName
 			// switch fieldTypeName {
